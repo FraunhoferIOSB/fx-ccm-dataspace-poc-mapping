@@ -9,20 +9,18 @@ import random
 app = Flask(__name__)
 
 
-# The route() function of the Flask class is a decorator,
-# which tells the application which URL should call
-# the associated function.
-@app.route("/")
-# ‘/’ URL is bound with hello_world() function.
-def hello_world():
-    return "Hello World"
 
 
-@app.route("/counter/properties/count", methods=["GET"])
-# ‘/’ URL is bound with hello_world() function.
-def countState():
+@app.route("/counter/properties/count1", methods=["GET"])
+# ‘/’ URL is bound with countState() function.
+def countState1():
     payload = str(round((random.random() * 100), 2))
-    print(payload)
+    return payload
+
+@app.route("/counter/properties/count2", methods=["GET"])
+# ‘/’ URL is bound with countState2() function.
+def countState2():
+    payload = str(round((random.random() * 100), 2))
     return payload
 
 

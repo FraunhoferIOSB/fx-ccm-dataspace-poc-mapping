@@ -2,7 +2,7 @@ from flask import Flask, request
 from flask_cors import cross_origin
 import json
 import InterfaceSetup
-import httpx
+
 
 # Flask constructor takes the name of
 # current module (__name__) as argument.
