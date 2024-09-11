@@ -1,0 +1,16 @@
+{
+  "ignoreUnresolved": [],
+  "ignoreUnused": [
+    "@mui/icons-material",
+    "@mui/lab",
+    "@testing-library/jest-dom",
+    "@testing-library/react",
+    "@testing-library/user-event",
+    "axios",
+    "fs",
+    "install",
+    "react-scripts",
+    "web-vitals"
+  ],
+  "ignoreUnimported": []
+}
