@@ -1,0 +1,15 @@
+.footer{
+    bottom: 0px;
+    color: blue;
+    height: 140px;
+    min-width: 100vw;
+    background-color: #dfe6ec;
+    text-align: center;
+    align-content: center;
+    
+}
+
+.logoFooter{
+    max-width: 150px;
+    margin: 20px auto;
+}

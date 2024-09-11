@@ -1,0 +1,28 @@
+version: "3.9"
+services:
+  asset:
+    build: ./data-source-app
+    ports:
+      - "8500:8500"
+    volumes:
+      - ./data-source-app:/assetapp
+
+  server:
+    build: ./BackendFlask
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./BackendFlask:/serverapp
+    environment:
+      - FLASK_ENV=development
+    depends_on:
+      - asset
+
+  client:
+    build: ./react-front-end
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./react-front-end:/clientapp
+    depends_on:
+      - server

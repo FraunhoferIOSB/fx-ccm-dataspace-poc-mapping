@@ -1,0 +1,15 @@
+.navbar{
+    left: 0;
+    top: 0;
+    color: blue;
+    height: 140px;
+    min-width: 100%;
+    background-color: #dfe6ec;
+}
+
+.Logo{
+    max-width: 150px;
+    margin-top: 25px;
+    margin-left: 25px;
+
+}
