@@ -33,7 +33,7 @@ def addDatapoint():
 
 @app.route("/getdatapoints", methods=["GET"])
 @cross_origin(origins=[ui_origin_localhost])
-# ‘/’ URL is bound with hello_world() function.
+# ‘/’ URL is bound with getDatapoint() function.
 def getDatapoints():
 
     datapoints = aasmapper.interfaces["assets"]
@@ -43,7 +43,7 @@ def getDatapoints():
 
 @app.route("/readdatapoint/", methods=["GET"])
 @cross_origin(origins=[ui_origin_localhost])
-# ‘/’ URL is bound with hello_world() function.
+# ‘/’ URL is bound with readDatapoint() function.
 def readDatapoint():
     id = request.args.get("id")
     assetId = request.args.get("assetId")
@@ -56,7 +56,7 @@ def readDatapoint():
 
 @app.route("/configinfo", methods=["POST"])
 @cross_origin(origins=[ui_origin_localhost])
-# ‘/’ URL is bound with hello_world() function.
+# ‘/’ URL is bound with submitConfigInfo() function.
 def submitConfigInfo():
     data = json.loads(request.data)
     print(data)

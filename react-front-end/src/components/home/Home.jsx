@@ -134,7 +134,8 @@ const Home = () => {
                                 <tr>
                                     <th>ID</th>
                                     <th>Name</th>
-                                    <th>contentType</th>
+                                    <th>ContentType</th>
+                                    <th>MappingCount</th>
                                     <th>Value</th>
                                     <th>Action</th>
                                 </tr>  
@@ -148,6 +149,7 @@ const Home = () => {
                                             <td>{datapoint['source-endpoint']['id']}</td>
                                             <td>{datapoint['source-endpoint']['name']}</td>
                                             <td>{datapoint['source-endpoint']['content-type']}</td>
+                                            <td>{datapoint['sink-endpoint'].length}</td>
                                             <td>{value}</td>
                                             <td>
                                                 <button onClick = {() => readDatapoint(datapoint['source-endpoint']['id'], asset["assetId"])} type="button">Read</button>
@@ -158,6 +160,7 @@ const Home = () => {
                                             <td>{datapoint['source-endpoint']['id']}</td>
                                             <td>{datapoint['source-endpoint']['name']}</td>
                                             <td>{datapoint['source-endpoint']['content-type']}</td>
+                                            <td>{datapoint['sink-endpoint'].length}</td>
                                             <td>{datapoint['source-endpoint']['value']}</td>
                                             <td>
                                                 <button  onClick ={() => readDatapoint(datapoint['source-endpoint']['id'], asset["assetId"])} type="button">Read</button>
@@ -306,7 +309,8 @@ const Home = () => {
                                 <tr>
                                     <th>ID</th>
                                     <th>Name</th>
-                                    <th>contentType</th>
+                                    <th>ContentType</th>
+                                    <th>MappingCount</th>
                                     <th>Value</th>
                                     <th>Action</th>
                                 </tr>  
@@ -320,6 +324,7 @@ const Home = () => {
                                             <td>{datapoint['source-endpoint']['id']}</td>
                                             <td>{datapoint['source-endpoint']['name']}</td>
                                             <td>{datapoint['source-endpoint']['content-type']}</td>
+                                            <td>{datapoint['sink-endpoint'].length}</td>
                                             <td>{value}</td>
                                             <td>
                                                 <button onClick = {() => readDatapoint(datapoint['source-endpoint']['id'],asset["assetId"])} type="button">Read</button>
@@ -330,6 +335,7 @@ const Home = () => {
                                             <td>{datapoint['source-endpoint']['id']}</td>
                                             <td>{datapoint['source-endpoint']['name']}</td>
                                             <td>{datapoint['source-endpoint']['content-type']}</td>
+                                            <td>{datapoint['sink-endpoint'].length}</td>
                                             <td>{datapoint['source-endpoint']['value']}</td>
                                             <td>
                                                 <button  onClick ={() => readDatapoint(datapoint['source-endpoint']['id'], asset["assetId"])} type="button">Read</button>
@@ -449,7 +455,7 @@ const Home = () => {
                                         <label htmlFor="contentType">ContentType: </label>
                                         <select style = {{height : "25px"}} defaultValue = "application/json" name="contentType" id="contentType">
                                             <option value="application/json">application/json</option>
-                                            <option value="application/csv">application/csv</option>
+                                            <option value="text/csv">text/csv</option>
                                             <option value="application/octet-stream">application/octet-stream</option>
                                             <option value="text/plain">text/plain</option>
                                         </select>
@@ -461,8 +467,8 @@ const Home = () => {
                                             <option value="number">Number</option>
                                             <option value="boolean">Boolean</option>
                                             <option value="string">String</option>
-                                            <option value="string">Object</option>
-                                            <option value="string">Array</option>
+                                            <option value="object">Object</option>
+                                            <option value="array">Array</option>
                                         </select>
                                     </div>
 
@@ -538,7 +544,8 @@ const Home = () => {
                                 <tr>
                                     <th>ID</th>
                                     <th>Name</th>
-                                    <th>contentType</th>
+                                    <th>ContentType</th>
+                                    <th>MappingCount</th>
                                     <th>Value</th>
                                     <th>Action</th>
                                 </tr>  
@@ -551,6 +558,7 @@ const Home = () => {
                                             <td>{datapoint['source-endpoint']['id']}</td>
                                             <td>{datapoint['source-endpoint']['name']}</td>
                                             <td>{datapoint['source-endpoint']['content-type']}</td>
+                                            <td>{datapoint['sink-endpoint'].length}</td>
                                             <td>{value}</td>
                                             <td>
                                                 <button onClick = {() => readDatapoint(datapoint['source-endpoint']['id'])} type="button">Read</button>
@@ -561,6 +569,7 @@ const Home = () => {
                                             <td>{datapoint['source-endpoint']['id']}</td>
                                             <td>{datapoint['source-endpoint']['name']}</td>
                                             <td>{datapoint['source-endpoint']['content-type']}</td>
+                                            <td>{datapoint['sink-endpoint'].length}</td>
                                             <td>{datapoint['source-endpoint']['value']}</td>
                                             <td>
                                                 <button  onClick ={() => readDatapoint(datapoint['source-endpoint']['id'])} type="button">Read</button>
@@ -683,6 +692,7 @@ const Home = () => {
                                     <th>ID</th>
                                     <th>Name</th>
                                     <th>contentType</th>
+                                    <th>MappingCount</th>
                                     <th>Value</th>
                                     <th>Action</th>
                                 </tr>  
@@ -696,6 +706,7 @@ const Home = () => {
                                             <td>{datapoint['source-endpoint']['id']}</td>
                                             <td>{datapoint['source-endpoint']['name']}</td>
                                             <td>{datapoint['source-endpoint']['content-type']}</td>
+                                            <td>{datapoint['sink-endpoint'].length}</td>
                                             <td>{value}</td>
                                             <td>
                                                 <button onClick = {() => readDatapoint(datapoint['source-endpoint']['id'])} type="button">Read</button>
@@ -706,6 +717,7 @@ const Home = () => {
                                             <td>{datapoint['source-endpoint']['id']}</td>
                                             <td>{datapoint['source-endpoint']['name']}</td>
                                             <td>{datapoint['source-endpoint']['content-type']}</td>
+                                            <td>{datapoint['sink-endpoint'].length}</td>
                                             <td>{datapoint['source-endpoint']['value']}</td>
                                             <td>
                                                 <button  onClick ={() => readDatapoint(datapoint['source-endpoint']['id'])} type="button">Read</button>
