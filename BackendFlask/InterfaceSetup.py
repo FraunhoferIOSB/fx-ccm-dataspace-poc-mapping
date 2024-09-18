@@ -5,6 +5,7 @@ import random
 import string
 import pandas
 from io import StringIO
+from Models import Models
 '''
 TODOs
 -- Creat a method that extract asset, work on it and return it back. 
@@ -15,145 +16,6 @@ def update datapoint(assetId, datapointId)
 #if anything changes from the datapoint (e.g, value, new sink registration e.t.c), 
 # it should be updated. 
 '''
-class Models():
-    def __init__(self):
-        self.interfaces = {
-            "endpoints" : {}, 
-
-            "assets" : []
-        }
-
-        self.endpoint = {
-                "submodel-endpoint" : "none",
-                "registry-endpoint" : "none",
-            }
-        
-        self.asset = {
-
-            "assetId" : "",
-            "aasId":"",
-            "aasDescriptor" : {},
-            "datapoints" : []
-
-        }
-
-        self.datapoint = {
-                
-                "source-endpoint": {
-                "id" : 0,
-                "name" : "",
-                "url" : "",
-                "method" : "",
-                "content-type" : "",
-                "data-type" : "number",
-                "value" : "NaN"
-
-                },
-
-                "sink-endpoint" : []
-            
-            }
-        self.sinkEndpoint =  {
-                                "sink-created": False,
-                                "submodel" : {},
-                                "submodelId" : "",
-                                "submodelIdBase64" : "",
-                                "submodelElementPath" : "",
-                                "submodelElementType" : "",
-                                "payloadMappingKeys" : ""
-                            }
-
-        self.Submodel =  {
-                            "idShort": "",
-                            "id": "",
-                            "semanticId": {
-                                "type": "ModelReference",
-                                "keys": [
-                                {
-                                    "type": "Submodel",
-                                    "value": "https://admin-shell.io/sinksubmodel"
-                                }
-                                ]
-                            },
-                            "submodelElements": [],
-                            "modelType": "Submodel"
-                        }
-
-        self.BlobSubmodelElement = {
-                                    "idShort": "",
-                                    "value": "",
-                                    "semanticId": {
-                                        "type": "ModelReference",
-                                        "keys": [
-                                        {
-                                            "type": "GlobalReference",
-                                            "value": "0173-1#02-AAM556#002"
-                                        }
-                                        ]
-                                    },
-                                    "contentType": "application/csv",
-                                    "modelType": "Blob"
-                                    }
-
-        self.PropertySubmodelElement =  {
-                                        "category": "PARAMETER",
-                                        "idShort": "",
-                                        "description": [],
-                                        "semanticId": {
-                                            "type": "ModelReference",
-                                            "keys": [
-                                            {
-                                                "type": "GlobalReference",
-                                                "value": "0173-1#02-AAM556#002"
-                                            }
-                                            ]
-                                        },
-                                        "valueType": "xs:string",
-                                        "value": "",
-                                        "modelType": "Property"
-                                        }
-
-        self.aasDescriptor = {
-                                "assetKind" : "Instance",
-                                "idShort" : "",
-                                "id" : "",
-                                "globalAssetId" : " ",
-                                "submodelDescriptors": [
-                                    
-                                ]
-                            }
-
-        self.submodelDescriptor = {
-                                    "endpoints" : [
-                                        {
-                                    "protocolInformation": {
-                                        "href": "https://localhost:1234/api/v3.0/submodels",
-                                        "endpointProtocol": "HTTP",
-                                        "endpointProtocolVersion": [
-                                        "1.1"
-                                        ]
-                                    },
-                                    "interface": "AAS-3.0"
-                                    }
-                                    ],
-                                    "idShort" : "data_sink",
-                                    "id" : "https://factoryxTP204.com/submodel-for-data-sink"
-                                }
-
-        self.registryHeader = {
-            'Content-Type': 'application/json',
-            'edc-bpn':'default-tenant'
-        }
-
-        self.submodelBasicAuth = ("fx","fx-ccm-poc")
-
-        self.assetId = ""
-        self.id = 0
-        self.counter = 0
-        self.indexes = {
-            "assetIndex" : 0,       
-            "datapointIndex" : 0,
-        }
 
 class AasMapper(Models):
     
@@ -279,6 +141,7 @@ class AasMapper(Models):
         source = datapoint["source-endpoint"]
         mappings = datapoint["sink-endpoint"]
         url = source["url"]
+        #method at the moment is automatically 'GET'
         response = httpx.get(url, timeout=15)
         
         #find the type of payload
@@ -302,12 +165,12 @@ class AasMapper(Models):
 
             updatedMappings= self.write_datapoint_to_sink(source["name"], mappings, csv_payload)
             
-            datapoint["source-endpoint"]["value"] = "NaN"+self.counter
+            datapoint["source-endpoint"]["value"] = f"NaN{self.counter}"
             datapoint["sink-endpoint"] = updatedMappings
             asset["datapoints"][self.indexes["datapointIndex"]] = datapoint
             self.interfaces["assets"][self.indexes["assetIndex"]] = asset
             self.counter += self.counter
-            return "NaN"+str(self.counter)
+            return f"NaN{self.counter}"
             
     def write_datapoint_to_sink(self, name, mappings, payload):
         submodel_url = self.interfaces["endpoints"]["submodel-endpoint"]
@@ -327,82 +190,78 @@ class AasMapper(Models):
                 #just post to the submodelId and submodel element in mapping
                 
             elif mappings[mappingIndex]["submodelElementType"].lower() == "property":
-                submodel = copy.deepcopy(self.Submodel)
-                submodel["idShort"] = "SourceDataSink_"+' '.join(random.choices(string.ascii_uppercase, k=1))
-                submodel["id"] = "https://example.com/ids/sm/5552_0182_8042_"+str(random.randint(1000, 9999))
-                propertySME = copy.deepcopy(self.PropertySubmodelElement)
-                propertySME["value"] = payload
-                propertySME["idShort"] = name
-                submodel["submodelElements"].append(propertySME)
+                submodel = self.set_up_submodel_property(payload, name)
 
-                response = httpx.post(submodel_url, auth=self.submodelBasicAuth, json=submodel, timeout=15)
-                if response.is_success:
-                    #submodel created, turn on the flag, assign the Ids to sink-created and register the submodel in registry
-                    mappings[mappingIndex]["submodel"] = submodel
-                    mappings[mappingIndex]["sink-created"] = True
-                    mappings[mappingIndex]["submodelId"] = submodel["id"]
-                    submodelId_byte = submodel["id"].encode('utf-8')
-                    mappings[mappingIndex]["submodelIdBase64"] = base64.b64encode(submodelId_byte).decode('utf-8')
-                    mappings[mappingIndex]["submodelElementPath"] = name
-        
+                if httpx.post(submodel_url, auth=self.submodelBasicAuth, json=submodel, timeout=15).is_success:
+                    #load mappings and register submodel descriptor.
+                    mappings = self.load_mappings(mappings, mappingIndex, submodel, name)
+                    
+                      
+            elif mappings[mappingIndex]["submodelElementType"].lower() == "blob":
+                
+                submodel = self.set_up_submodel_blob(payload, name, mappings[mappingIndex]["payloadMappingKeys"])
+
+                if httpx.post(submodel_url, auth=self.submodelBasicAuth, json=submodel, timeout=15).is_success:
+                    #load mappings and register submodel descriptor.
+                    mappings = self.load_mappings(mappings, mappingIndex, submodel, name)
                     
                 
-            elif mappings[mappingIndex]["submodelElementType"].lower() == "blob":
-                if mappings[mappingIndex]["payloadMappingKeys"] == "":
-                    submodel = copy.deepcopy(self.Submodel)
-                    submodel["idShort"] = "SourceDataSink_"+' '.join(random.choices(string.ascii_uppercase, k=1))
-                    submodel["id"] = "https://example.com/ids/sm/5552_0182_8042_"+str(random.randint(1000, 9999))
-                    blobSME = copy.deepcopy(self.BlobSubmodelElement)
-                    #convert payload to base64 string. 
-                    payload_byte = payload.encode('utf-8')
-                    blobSME["value"] = base64.b64encode(payload_byte).decode('utf-8')
-                    blobSME["idShort"] = name
-                    submodel["submodelElements"].append(blobSME)
-                    if httpx.post(submodel_url, auth=self.submodelBasicAuth, json=submodel, timeout=15).is_success:
-                        mappings[mappingIndex]["submodel"] = submodel
-                        mappings[mappingIndex]["sink-created"] = True
-                        mappings[mappingIndex]["submodelId"] = submodel["id"]
-                        submodelId_byte = submodel["id"].encode('utf-8')
-                        mappings[mappingIndex]["submodelIdBase64"] = base64.b64encode(submodelId_byte).decode('utf-8')
-                        mappings[mappingIndex]["submodelElementPath"] = name
-                else: #payloadMapping is not empty
-                    submodel = copy.deepcopy(self.Submodel)
-                    submodel["idShort"] = "SourceDataSink_"+' '.join(random.choices(string.ascii_uppercase, k=1))
-                    submodel["id"] = "https://example.com/ids/sm/5552_0182_8042_"+str(random.randint(1000, 9999))
-                    blobSME = copy.deepcopy(self.BlobSubmodelElement)
-                    #columns extraction
-                    mapping_keys = mappings[mappingIndex]["payloadMappingKeys"]
-                    mapping_keys = mapping_keys.replace(' ', '')
-                    keys = mapping_keys.split(',')
-                    csv_payload = StringIO(payload) 
-                    csv_dataFrame = pandas.read_csv(csv_payload, usecols=keys)
-                    #convert csv to string
-                    csv_string = csv_dataFrame.to_csv(index=False)
-                    #convert csv_string to base64 string. 
-                    payload_byte = csv_string.encode('utf-8')
-                    blobSME["value"] = base64.b64encode(payload_byte).decode('utf-8')
-                    blobSME["idShort"] = name
-                    submodel["submodelElements"].append(blobSME)
-                    if httpx.post(submodel_url, auth=self.submodelBasicAuth, json=submodel, timeout=15).is_success:
-                        mappings[mappingIndex]["submodel"] = submodel
-                        mappings[mappingIndex]["sink-created"] = True
-                        mappings[mappingIndex]["submodelId"] = submodel["id"]
-                        submodelId_byte = submodel["id"].encode('utf-8')
-                        mappings[mappingIndex]["submodelIdBase64"] = base64.b64encode(submodelId_byte).decode('utf-8')
-                        mappings[mappingIndex]["submodelElementPath"] = name
-                    
                     
         return mappings  
 
 
-                        #method at the moment is automatically 'GET'
+    def set_up_submodel_property(self,value, idShort):
+        submodel = copy.deepcopy(self.Submodel)
+        submodel["idShort"] = "SourceDataSink_"+' '.join(random.choices(string.ascii_uppercase, k=1))
+        submodel["id"] = "https://example.com/ids/sm/5552_0182_8042_"+str(random.randint(1000, 9999))
+        propertySME = copy.deepcopy(self.PropertySubmodelElement)
+        propertySME["value"] = value
+        propertySME["idShort"] = idShort
+        submodel["submodelElements"].append(propertySME)
+        return submodel
 
+    def set_up_submodel_blob(self, value, idShort, mappingKeys):
+        submodel = copy.deepcopy(self.Submodel)
+        submodel["idShort"] = "SourceDataSink_"+' '.join(random.choices(string.ascii_uppercase, k=1))
+        submodel["id"] = "https://example.com/ids/sm/5552_0182_8042_"+str(random.randint(1000, 9999))
+        blobSME = copy.deepcopy(self.BlobSubmodelElement)
+        blobSME["idShort"] = idShort
+        if mappingKeys == "":
+            #convert payload to base64 string. 
+            payload_byte = value.encode('utf-8')
+        else:
+            mappingKeys = mappingKeys.replace(' ', '')
+            keys = mappingKeys.split(',')
+            csv_payload = StringIO(value) 
+            csv_dataFrame = pandas.read_csv(csv_payload, usecols=keys)
+            #convert csv to string
+            csv_string = csv_dataFrame.to_csv(index=False)
+            payload_byte = csv_string.encode('utf-8')
+
+        blobSME["value"] = base64.b64encode(payload_byte).decode('utf-8')
+        submodel["submodelElements"].append(blobSME)
+
+        return submodel
+
+
+    def load_mappings(self, mappings, mappingIndex, submodel, idShortPath):
+        #submodel created, turn on the flag, assign the Ids to sink-created and register the submodel in registry
+        mappings[mappingIndex]["submodel"] = submodel
+        mappings[mappingIndex]["sink-created"] = True
+        mappings[mappingIndex]["submodelId"] = submodel["id"]
+        submodelId_byte = submodel["id"].encode('utf-8')
+        mappings[mappingIndex]["submodelIdBase64"] = base64.b64encode(submodelId_byte).decode('utf-8')
+        mappings[mappingIndex]["submodelElementPath"] = idShortPath
+        
+        return mappings
+        #create submodel descriptor and post it
 
     def extract_asset(self,assetId):
         for assetIndex in range(len(self.interfaces["assets"])): #using indexing here to be able to update the asset array and datapoint array
             asset = self.interfaces["assets"][assetIndex]
             if asset['assetId'] == assetId:
                 self.indexes["assetIndex"] = assetIndex
+                self.indexes["aasId"] = asset["aasId"]
                 
                 return asset
         
@@ -423,65 +282,3 @@ class AasMapper(Models):
         
         return submodel
     
-
-'''
- {
-                            "source-endpoint": 
-                            {
-                            "submodelCreated" : False,
-                            "id" : 1,
-                            "name" : "count",
-                            "url" : "http://asset:8500/counter/properties/count",
-                            "method" : "get",
-                            "content-type" : "text/plain",
-                            "data-type" : "number",
-                            "value" : "Factory X"
-
-                            },
-
-                            "sink-endpoint" : 
-                            [
-                                {
-                                "submodelId" : "",
-                                "submodelElementPath" : "",
-                                "submodelElementType" : "",
-                                "payloadMappingKeys" : "Time,Sensor1,Sensor2"
-                                }
-                            ]
-                        
-                        }
-
-
-
-
-descritor = {
-    "kind" : "instance",
-    "idshort" : "ComponentA",
-    "id" : "https://example.com/ids/sm/5552_0182_8042_7251",
-    "submodelDescriptors": [
-        {
-        "endpoints" : [
-            {
-          "protocolInformation": {
-            "href": "https://localhost:1234/api/v3.0/submodels",
-            "endpointProtocol": "HTTP",
-            "endpointProtocolVersion": [
-              "1.1"
-            ]
-          },
-          "interface": "AAS-3.0"
-        }
-        ],
-         "idShort" : "Nameplate",
-         "id" : "https://admin-shell.io/zvei/nameplate/1/0/Nameplate"
-        }
-    ]
-
-}
-
-'''     
-        
-        
-
-
-        
