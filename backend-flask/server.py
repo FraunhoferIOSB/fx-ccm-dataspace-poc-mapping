@@ -8,11 +8,12 @@ import InterfaceSetup
 # current module (__name__) as argument.
 app = Flask(__name__)
 
-#Interface object
+# Interface object
 
 aasmapper = InterfaceSetup.AasMapper()
 ui_origin_localhost = "http://localhost:3000"
 ui_origin_docker = "http://client:3000"
+
 
 # The route() function of the Flask class is a decorator,
 # which tells the application which URL should call
@@ -23,16 +24,17 @@ def hello_world():
     return "Hello World"
 
 
-@app.route("/adddatapoint/", methods=["POST"])
-@cross_origin(origins=[ui_origin_localhost])
-#/add-datapoint is bound with addDatapoint() function to add new datapoint
+@app.route("/adddatapoint", methods=["POST"])
+@cross_origin(origins=[ui_origin_docker])
+# /add-datapoint is bound with addDatapoint() function to add new datapoint
 def addDatapoint():
     data = json.loads(request.data)
     assets = aasmapper.add_datapoint(data)
-    return {"assets":assets}
+    return {"assets": assets}
+
 
 @app.route("/getdatapoints", methods=["GET"])
-@cross_origin(origins=[ui_origin_localhost])
+@cross_origin(origins=[ui_origin_docker])
 # ‘/’ URL is bound with getDatapoint() function.
 def getDatapoints():
 
@@ -41,21 +43,20 @@ def getDatapoints():
     return {"assets": datapoints, "endpoints": endpoints}
 
 
-@app.route("/readdatapoint/", methods=["GET"])
-@cross_origin(origins=[ui_origin_localhost])
+@app.route("/readdatapoint", methods=["GET"])
+@cross_origin(origins=[ui_origin_docker])
 # ‘/’ URL is bound with readDatapoint() function.
 def readDatapoint():
     id = request.args.get("id")
     assetId = request.args.get("assetId")
-    
+
     payload = aasmapper.read_datapoint_from_source(assetId=assetId, id=id)
-    
 
     return payload
 
 
 @app.route("/configinfo", methods=["POST"])
-@cross_origin(origins=[ui_origin_localhost])
+@cross_origin(origins=[ui_origin_docker])
 # ‘/’ URL is bound with submitConfigInfo() function.
 def submitConfigInfo():
     data = json.loads(request.data)

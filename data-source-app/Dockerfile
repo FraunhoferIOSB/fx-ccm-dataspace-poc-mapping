@@ -1,13 +1,15 @@
-FROM python:3
+# simple BASE-Image
+FROM python:3.10.11
 
-WORKDIR /assetapp
+# working directory for te container
+WORKDIR /fx_data_source
 
-ENV FLASK_APP=app.py
+# Install requirements
+COPY ./req.txt  /fx_data_source/req.txt
+RUN pip install --no-cache-dir --upgrade -r /fx_data_source/req.txt
 
-COPY . .
-
-RUN pip install -r requirements.txt
-
-EXPOSE 8500
-
-CMD ["python", "app.py"]
+# Run "API-APP"
+COPY ./app /fx_data_source/app
+CMD ["uvicorn", "app.poc_data_source:app", "--host", "0.0.0.0", "--port", "80"]
+# NOTE: we might want to change the port-cfg depending on the deployment
+#       on the individual k8s-clusters (Arno's cluster, Catena cluster, SFH ...) 

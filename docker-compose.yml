@@ -8,11 +8,11 @@ services:
       - ./data-source-app:/assetapp
 
   server:
-    build: ./BackendFlask
+    build: ./backend-flask
     ports:
       - "5000:5000"
     volumes:
-      - ./BackendFlask:/serverapp
+      - ./backend-flask:/serverapp
     environment:
       - FLASK_ENV=development
     depends_on:

@@ -81,7 +81,7 @@ const Home = () => {
     async function readDatapoint(id, assetId) {
         setdatapointId(id)
         setAssetId(assetId)
-        const responseData =  await fetch('/readdatapoint/?id='+id+'&assetId='+assetId);
+        const responseData =  await fetch('/readdatapoint?id='+id+'&assetId='+assetId);
         for(let i = 0;  i < assetDatapoints.length; i++){
             if(assetDatapoints[i]['assetId'] === assetId){
                 let datapoints = assetDatapoints[i]['datapoints']

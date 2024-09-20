@@ -2,12 +2,10 @@
 >[!NOTE]
 This repository is still work in progress and not intended for **production purpose**. It is developed as part of the components for **TP 2.4 PoC**.
 
-### Acronyms 
-AAS --> Asset Administration
 
 # fx-ccm-dataspace-poc-mapping
 
-AAS Mapper is a **python (back-end)** and **react (front-end)** based implementation to integrate shopfloor data into AAS.
+Asset Administration Shell(AAS) Mapper is a **python (back-end)** and **react (front-end)** based implementation to integrate shopfloor data into AAS.
 
 The react front-end is a simple UI that help facilitate the inputation of endpoints that AAS mapper is interfacing with and also datapoints of the shopfloor asset. 
 
