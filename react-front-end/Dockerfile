@@ -1,10 +1,12 @@
 FROM node
 
-WORKDIR /clientapp
+WORKDIR /usr/src/client
 
-COPY . .
+COPY package*.json ./
 
 RUN npm install
+
+COPY . .
 
 EXPOSE 3000
 
