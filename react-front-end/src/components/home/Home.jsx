@@ -20,7 +20,7 @@ const Home = () => {
       }, []);
 
       async function fetchItems(){
-        const response = await fetch('/getdatapoints');
+        const response = await fetch('http://server:5000/getdatapoints');
         const data = await response.json();
         setAssetDatapoints(data['assets']);
         setEndpoints(data['endpoints']);
@@ -48,7 +48,7 @@ const Home = () => {
             headers : {'Content-Type' : 'application/json'},
             body : JSON.stringify(configObject)
         };
-        const response = await fetch('/configinfo', configData);
+        const response = await fetch('http://server:5000/configinfo', configData);
         if(response.ok){
             const data = await response.json();
             setAssetDatapoints(data['assets']);
@@ -69,7 +69,7 @@ const Home = () => {
             headers : {'Content-Type' : 'application/json'},
             body : JSON.stringify(datapointObject)
         };
-        const response = await fetch('/adddatapoint', datapointData);
+        const response = await fetch('http://server:5000/adddatapoint', datapointData);
         if(response.ok){
             const data = await response.json();
             setAssetDatapoints(data['assets']);
@@ -81,7 +81,7 @@ const Home = () => {
     async function readDatapoint(id, assetId) {
         setdatapointId(id)
         setAssetId(assetId)
-        const responseData =  await fetch('/readdatapoint?id='+id+'&assetId='+assetId);
+        const responseData =  await fetch('http://server:5000/readdatapoint?id='+id+'&assetId='+assetId);
         for(let i = 0;  i < assetDatapoints.length; i++){
             if(assetDatapoints[i]['assetId'] === assetId){
                 let datapoints = assetDatapoints[i]['datapoints']
