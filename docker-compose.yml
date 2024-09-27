@@ -1,5 +1,5 @@
 version: "3.9"
-   services:
+services:
      asset:
        build: ./data-source-app
        ports:
@@ -38,6 +38,6 @@ version: "3.9"
        environment:
          - NO_PROXY=localhost,127.0.0.1,server,asset
 
-   networks:
+networks:
      app_network:
        driver: bridge
