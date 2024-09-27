@@ -74,7 +74,7 @@ class AasMapper(Models):
     def descriptor_already_exist(self, descriptors, assetId):
         descriptor = {}
         for _descriptor in descriptors:
-            if assetId == _descriptor["globalAssetId"]:
+            if assetId == _descriptor.get("globalAssetId", ""):
                 return _descriptor
         return descriptor
             
