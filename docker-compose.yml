@@ -6,6 +6,8 @@ services:
       - "8500:8500"
     volumes:
       - ./data-source-app:/assetapp
+    networks:
+      - app_network
 
   server:
     build: ./backend-flask
@@ -17,6 +19,8 @@ services:
       - FLASK_ENV=development
     depends_on:
       - asset
+    networks:
+      - app_network
 
   client:
     build: ./react-front-end
@@ -26,3 +30,9 @@ services:
       - ./react-front-end:/clientapp
     depends_on:
       - server
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
